@@ -8,10 +8,9 @@ export default function VoiceCall() {
   const [vapiStatus, setVapiStatus] = useState('offline');
   const [volume, setVolume] = useState([10, 10, 10, 10, 10]);
 
-  // Vapi Public Token and Assistant ID
-  // Replace these with your live Vapi Dashboard credentials
-  const VAPI_PUBLIC_KEY = "3b76251b-bc58-45a7-bcce-d336a188f579"; // Example public key
-  const VAPI_ASSISTANT_ID = "scaler-dipti-ai-rep";
+  // Vapi Public Token and Assistant ID loaded dynamically
+  const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY || "3b76251b-bc58-45a7-bcce-d336a188f579";
+  const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID || "scaler-dipti-ai-rep";
 
   useEffect(() => {
     try {

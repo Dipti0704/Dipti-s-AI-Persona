@@ -5,7 +5,7 @@ import Scheduler from './components/Scheduler';
 import { Bot, User, Code, Calendar, FileText, BarChart3, Mail, Phone, MapPin, ExternalLink, Cpu } from 'lucide-react';
 
 export default function App() {
-  const BACKEND_URL = "http://localhost:8000";
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
   const [activeTab, setActiveTab] = useState('chat'); // chat, voice, scheduler, evals
 
   const projects = [

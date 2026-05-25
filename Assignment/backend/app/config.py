@@ -4,7 +4,12 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-load_dotenv(BASE_DIR / ".env")
+# Check backend/.env first, then fall back to root .env
+backend_env = BASE_DIR / "backend" / ".env"
+if backend_env.exists():
+    load_dotenv(backend_env)
+else:
+    load_dotenv(BASE_DIR / ".env")
 
 class Settings:
     # OpenAI settings
