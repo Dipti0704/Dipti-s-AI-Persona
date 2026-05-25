@@ -1,0 +1,135 @@
+[
+  {
+    "id": "talentsearch_ai",
+    "name": "TalentSearch AI",
+    "subtitle": "Resume RAG & Agentic Recruiting Assistant",
+    "purpose": "A production-grade AI-powered recruiter assistant that enables recruiters to search, rank, and shortlist job candidates using natural language, with a self-contained RAG and agentic workflows that automatically write shortlist tables to Google Sheets.",
+    "tech_stack": [
+      "Python",
+      "OpenAI API",
+      "Pinecone Vector Database",
+      "Streamlit Dashboard",
+      "LangChain Orchestration",
+      "Google Sheets API",
+      "Google Drive API",
+      "PyPDF2 PDF Extractor",
+      "REST APIs"
+    ],
+    "architecture": "User interacts with a Streamlit front-end which calls an LLM Agent (GPT-4o-mini). The agent decides to call search tools. Resumes are pulled from Google Drive, parsed locally via PyPDF2, chunked, embedded using OpenAI text-embedding-3-small, and indexed in Pinecone. The search queries compute cosine similarity against indexed chunks. The retrieved candidate cards are scored, summarized, and matched to requirements. Recruitment actions (such as 'Shortlist') are written directly to Google Sheets via service accounts.",
+    "tradeoffs": {
+      "pros": [
+        "Dynamic query-based candidate filtering and semantic search instead of simple keyword matching.",
+        "Cost-optimized LLM requests by batching scoring and candidate highlights into a single query.",
+        "End-to-end integration from document retrieval (Google Drive) to business actions (Google Sheets shortlisting)."
+      ],
+      "cons": [
+        "Highly dependent on PDF extraction quality; heavily stylized layouts or image-based PDFs fail parsing without expensive OCR.",
+        "Google Sheets API is vulnerable to rate limit quotas when bulk-updating large lists of candidates.",
+        "Pinecone index setup requires internet connectivity and introduces cloud cost compared to purely local stores."
+      ]
+    },
+    "features": [
+      "Smart candidate search with dynamic Top-K handling",
+      "Agentic tool-calling (search_candidates, shortlist_candidates, get_resume)",
+      "OpenAI text-embeddings indexed in Pinecone Vector DB",
+      "Bulk shortlisting with instant, color-coded updates to Google Sheets",
+      "Robust logging to persistent logs.txt files"
+    ]
+  },
+  {
+    "id": "agentic_ai_dev",
+    "name": "Agentic AI Dev",
+    "subtitle": "Self-Correcting Multi-Agent Code Generation Sandbox",
+    "purpose": "An autonomous AI software developer that takes a software description/prompt, plans the folder layout, architecturally models code, generates multi-file Python systems, executes them in a local sandbox, and self-heals by parsing interpreter errors and feeding them back to a debugger agent.",
+    "tech_stack": [
+      "Python",
+      "OpenAI GPT Models",
+      "Custom Process Execution Sandbox",
+      "Streamlit UI",
+      "JSON Configuration Parser"
+    ],
+    "architecture": "Uses a sequential Multi-Agent pipeline: 1. Planner Agent outlines tasks; 2. Architect Agent plans files and folders; 3. Coder Agent generates complete Python scripts. The system then invokes a subprocess execution sandbox to run the code. If an execution error occurs, the Debugger Agent takes the script, parses the traceback, generates a fix, updates the file, and runs it again. It loops up to a max debug limit until the code runs successfully.",
+    "tradeoffs": {
+      "pros": [
+        "Highly autonomous pipeline that resolves syntax errors, logical crashes, and library version mismatches without human intervention.",
+        "Clear separation of concerns (Planner vs Architect vs Coder vs Debugger) results in higher code quality than monolithic generation."
+      ],
+      "cons": [
+        "Running generated code locally in a subprocess presents security isolation risks; it should run in containerized environments (e.g. Docker).",
+        "Iterative debugging loops can quickly consume large volumes of LLM tokens and increase generation time.",
+        "Limited to self-contained applications with standard local execution triggers (e.g., standard python app.py entries)."
+      ]
+    },
+    "features": [
+      "Four specialized agents: Planner, Architect, Coder, Debugger",
+      "Automatic error catching and traceback analysis",
+      "Iterative self-debugging loop with configurable retry caps",
+      "Interactive Streamlit dashboard tracking live code outputs, logs, and success states"
+    ]
+  },
+  {
+    "id": "agentic_ai_business_system",
+    "name": "Agentic AI Business System",
+    "subtitle": "Local Multi-Agent Enterprise Orchestration Platform",
+    "purpose": "A secure, privacy-focused, zero-API-cost multi-agent workspace that automates key corporate functions (Sales, Marketing, Copywriting, and Analytics) using locally running open-source LLMs.",
+    "tech_stack": [
+      "Python",
+      "Flask Web Server",
+      "LangGraph State Orchestrator",
+      "Ollama",
+      "Llama3 / Phi3 LLMs",
+      "Streamlit UI Client"
+    ],
+    "architecture": "Implemented with LangGraph state graphs. The Streamlit front-end sends requests to a Flask API backend. A router agent classifies the query into a business domain (Sales, Marketing, Copywriting, or Analytics). LangGraph routes the state to the designated agent node. The output of one agent (e.g. Sales outline) is automatically refined by a copywriting agent. Model weights are served offline using local Ollama runners. Responses are streamed directly to the client UI.",
+    "tradeoffs": {
+      "pros": [
+        "Zero API cost and absolute data privacy; no business data ever leaves the local enterprise environment.",
+        "LangGraph state orchestration ensures deterministic routing, cyclical collaboration, and robust state memory."
+      ],
+      "cons": [
+        "Requires powerful local hardware (high GPU VRAM) to run 8B models like Llama3 at acceptable speeds.",
+        "Local models exhibit lower reasoning capabilities, poorer prompt alignment, and higher hallucination rates than GPT-4o.",
+        "Higher latency for complex multi-agent reasoning chains compared to commercial hosted endpoints."
+      ]
+    },
+    "features": [
+      "LangGraph cyclic state graph orchestration",
+      "LLM-based automatic query domain classification",
+      "Ollama local model integration (Llama3, Phi3)",
+      "Multi-agent collaborative pipelines (Sales + Copywriting refinements)",
+      "Real-time streaming responses over Flask API"
+    ]
+  },
+  {
+    "id": "ecommerce_fraud_detection",
+    "name": "Ecommerce Fraud Detection Pipeline",
+    "subtitle": "Data Science Engineering & Machine Learning Ensemble System",
+    "purpose": "An end-to-end data pipeline that automatically generates synthetic online transaction datasets, injects sophisticated fraud vectors, engineers key features, trains predictive machine learning ensembles, and generates executive business reports.",
+    "tech_stack": [
+      "Python",
+      "Pandas & NumPy",
+      "Scikit-Learn Machine Learning Libraries",
+      "OpenPyXL (Excel Generator)",
+      "Matplotlib / Visualization",
+      "Logging Utilities"
+    ],
+    "architecture": "The data pipeline executes sequentially: 1. DataGenerator outputs mock users, orders, and returns; 2. FraudInjector injects realistic malicious behaviors (e.g., refund speed-runs, high-value click-spikes); 3. FeatureEngineer processes clickstream and purchase records into structured feature matrices; 4. FraudDetector (ML Ensemble) fits, predicts risk probabilities, and reports feature importances; 5. ExcelReportWriter writes styled spreadsheets complete with conditional formatting, summary metrics, and fraud graphs.",
+    "tradeoffs": {
+      "pros": [
+        "High processing speed, fully offline execution, and complete control over the dataset's features and fraud density.",
+        "Creates comprehensive business reports in professional formats (styled Excel Sheets) ready for administrative stakeholders."
+      ],
+      "cons": [
+        "Static fraud injection patterns risk oversimplifying realistic, evolving adversarial attacks.",
+        "Supervised ML models are vulnerable to concept drift; they require periodic retraining as buying and return patterns shift."
+      ]
+    },
+    "features": [
+      "Synthetic transaction data generator (orders, returns, users)",
+      "Advanced feature engineering (refund velocity, click-to-buy ratio, purchase frequencies)",
+      "Machine learning fraud risk scoring ensemble",
+      "Automated custom Excel executive report creation (formatted, color-coded, visual)",
+      "Offline dashboard data output"
+    ]
+  }
+]

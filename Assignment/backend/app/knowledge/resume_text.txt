@@ -1,0 +1,40 @@
+Dipti Hatwar
++91-8446447324|dipti820h@gmail.com |LinkedIn |GitHub |LeetCode
+
+Experience
+WNS-VURAM March 2025 – July 2025
+AI Research Developer Intern Bengaluru, India
+•Built an automated BRD-to-Jira pipeline with priority extraction, parsing requirement documents to generate structured projects (epics, user stories, tasks) with assigned owners and priorities.
+•Conducted in-depth research and feasibility analysis on Firecrawl (FIRE-1 agent) as an alternative to traditional RPA tools, evaluating cost, scalability, and end-to-end automation capabilities.
+•Designed and implemented agentic multi-agent workflows using LangGraph, UiPath, and Maestro, enabling intelligent task orchestration with minimal human intervention (human-in-the-loop systems).
+•Developed a HIPAA-compliant medical insurance AI system that analyzes doctor–patient transcripts to recommend applicable insurance codes and generate structured medical reports, streamlining medical coding workflows.
+
+Projects
+Production-Grade Retail Data Platform using Spark & Hive
+•Designed and built a 3-layer data platform (Raw, Staging, Analytics) on HDFS using Hive and PySpark, enabling centralized processing of multi-source retail datasets (orders, customers, payments, inventory, clickstream).
+•Developed data cleaning and transformation pipelines in PySpark, handling duplicates, nulls, schema standardization, and business rule validations; implemented partitioning and joins to optimize performance and enrich datasets.
+•Built a star schema data model (fact + dimension tables) and generated business insights (CLV, AOV, top products, revenue trends), improving analytical readiness and query efficiency.
+
+TalentSearch AI
+Tech: Python, OpenAI, Pinecone, Streamlit, LangChain, Google Sheets API, Google Drive API, PyPDF2, REST APIs
+•Developed an AI-powered hiring assistant using RAG and LLM agents for semantic resume retrieval, ranking, and analysis.
+•Built a Pinecone-based vector search pipeline with agentic LLM workflows for dynamic candidate search and shortlisting.
+•Reduced LLM usage by combining scoring and summarization, improving cost efficiency and response latency.
+
+Education
+Scaler School of Technology Jul 2023 – Present
+B.Sc. & M.Sc. in Computer Science Bengaluru, India
+•Current CGR (equivalent to CGPA): 7.7
+BITS Pilani (in association with Coursera) Jul 2023 – Present
+B.Sc. in Computer Science Bengaluru, India
+•Current CGPA: 7.9
+
+Technical Skills
+Languages & Databases: Python, Java, JavaScript, SQL, MongoDB
+AI/ML & Automation: Agentic AI, RAG, Prompt Engineering, Langchain, LangGraph, UiPath
+Web frameworks & Technologies: React.js, Node.js, Express.js, Git/GitHub, REST APIs, Streamlit
+
+POSITION OF RESPONSIBILITY
+Secretary of Placement Cell Sep 2024 – August 2025
+Placement Committee, Scaler School of Technology
+•Managed student profiles and collaborated with industry partners, ensuring clear communication between students and recruiters for smooth placement processes.
