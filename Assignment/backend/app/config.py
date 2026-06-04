@@ -24,6 +24,10 @@ class Settings:
     # Calendar settings (optional, will fall back to local bookings.json if not configured)
     CAL_API_KEY: str = os.getenv("CAL_API_KEY", "")
     CAL_EVENT_TYPE_ID: str = os.getenv("CAL_EVENT_TYPE_ID", "")
+    LOCAL_BOOKINGS_PATH: str = os.getenv(
+        "LOCAL_BOOKINGS_PATH",
+        str(BASE_DIR / "backend" / "data" / "bookings.json"),
+    )
     
     # Server settings
     PORT: int = int(os.getenv("PORT", "8000"))

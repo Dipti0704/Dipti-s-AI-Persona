@@ -8,11 +8,16 @@ export default function VoiceCall() {
   const [vapiStatus, setVapiStatus] = useState('offline');
   const [volume, setVolume] = useState([10, 10, 10, 10, 10]);
 
-  // Vapi Public Token and Assistant ID loaded dynamically
-  const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY || "3b76251b-bc58-45a7-bcce-d336a188f579";
-  const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID || "scaler-dipti-ai-rep";
+  const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+  const VAPI_ASSISTANT_ID = import.meta.env.VITE_VAPI_ASSISTANT_ID;
+  const isVoiceConfigured = Boolean(VAPI_PUBLIC_KEY && VAPI_ASSISTANT_ID);
 
   useEffect(() => {
+    if (!isVoiceConfigured) {
+      setVapiStatus('Setup Required');
+      return;
+    }
+
     try {
       const vapiInstance = new Vapi(VAPI_PUBLIC_KEY);
       setVapi(vapiInstance);
@@ -40,10 +45,15 @@ export default function VoiceCall() {
       });
     } catch (err) {
       console.error("Vapi failed to load:", err);
+      setVapiStatus('Setup Error');
     }
-  }, []);
+  }, [VAPI_PUBLIC_KEY, isVoiceConfigured]);
 
   const handleCall = async () => {
+    if (!isVoiceConfigured) {
+      setVapiStatus('Missing Vapi Env Vars');
+      return;
+    }
     if (!vapi) return;
     
     if (callActive) {
@@ -55,9 +65,6 @@ export default function VoiceCall() {
       } catch (err) {
         console.error(err);
         setVapiStatus('Call Failed');
-        // Simulated Local Microphone Session Fallback (extremely elegant!)
-        setCallActive(true);
-        setTimeout(() => setVapiStatus('Connected (Mock Mode)'), 1000);
       }
     }
   };
@@ -140,7 +147,7 @@ export default function VoiceCall() {
         </div>
         <div style={{ fontSize: '0.75rem', color: 'var(--text-dimmed)', display: 'flex', gap: '6px', alignItems: 'flex-start', marginTop: '2px' }}>
           <Info size={12} style={{ flexShrink: 0, marginTop: '2px' }} />
-          <span>Call this number from any phone to talk directly with Dipti's AI assistant, check slots, and book live interviews end-to-end!</span>
+          <span>Configure Vapi and Twilio credentials to enable live phone calls, slot checks, and interview booking.</span>
         </div>
       </div>
 
@@ -149,6 +156,7 @@ export default function VoiceCall() {
         onClick={handleCall}
         className={callActive ? "btn btn-secondary" : "btn btn-primary"}
         style={{ width: '100%', height: '48px', borderRadius: '14px' }}
+        disabled={!isVoiceConfigured}
       >
         {callActive ? (
           <>

@@ -1,152 +1,137 @@
-# Dipti Hatwar's AI Representative (Voice, Chat, and Scheduling System)
+# Dipti Hatwar AI Persona
 
-This repository contains the complete, production-grade codebase for **Dipti Hatwar's AI Representative**. The system enables recruiters to interact with Dipti's virtual persona via a real-time **Web Chat Interface**, a **Telephony Voice Line**, and a **Calendar Scheduling System**—all fully grounded in her actual resume and GitHub repositories with **0% hallucination rate**.
+This project is an AI representative for Dipti Hatwar. It supports:
 
----
+- grounded chat using resume and project knowledge
+- calendar slot checking and interview booking
+- a Vapi/Twilio voice webhook path
+- a React dashboard for recruiters
+- a small evaluation script for groundedness and latency checks
 
-## 🏗️ System Architecture
+The main engineering idea is simple: the assistant should answer personal/career questions only from verified knowledge, and should use tools when it needs to search knowledge or book meetings.
 
-The application is split into a modular backend and a modern glassmorphic frontend, complying with the **Open-Closed Principle (OCP)** where databases, vector stores, and calendars are decoupled behind interfaces.
+## How The System Works
 
-```
-                ┌───────────────────────────────────────┐
-                │        Dipti Hatwar's Profile         │
-                │   Resume text + GitHub Repos JSON     │
-                └───────────────────┬───────────────────┘
-                                    │
-                            Semantic Chunking
-                                    │
-                ┌───────────────────▼───────────────────┐
-                │      RAG Embeddings Vector Store      │
-                │  OpenAI Embeddings / Local similarity  │
-                └───────────────────┬───────────────────┘
-                                    │
-            ┌───────────────────────┴───────────────────────┐
-            │                                               │
-┌───────────▼───────────┐                       ┌───────────▼───────────┐
-│     Chat Web UI       │                       │  Voice Phone Agent    │
-│  React + Vite Client  │                       │   Vapi + Twilio Line  │
-└───────────┬───────────┘                       └───────────┬───────────┘
-            │                                               │
-            └───────────────┬───────────────────────────────┘
-                            │
-                ┌───────────▼───────────┐
-                │ FastAPI Agent Brain   │
-                │ OpenAI Tool Calling   │
-                └───────────┬───────────┘
-                            │
-            ┌───────────────┼───────────────┐
-            │               │               │
-┌───────────▼───────────┐ ┌─▼─────────────┐ ┌───────────▼───────────┐
-│   RAG Search Tool     │ │ Calendar Tool │ │ GitHub Metadata Tool  │
-│  Resume & Repos text  │ │ Cal.com/Local │ │ 4 Project repositories│
-└───────────────────────┘ └───────────────┘ └───────────────────────┘
+```text
+Recruiter UI / Voice Call
+        |
+        v
+FastAPI routes in backend/app/api
+        |
+        v
+Agent in backend/app/agents/openai_agent.py
+        |
+        +--> RAG search tool in backend/app/tools/rag_tool.py
+        |       |
+        |       v
+        |   Knowledge chunks from backend/app/knowledge
+        |
+        +--> Calendar tool in backend/app/tools/calendar_tool.py
+                |
+                v
+            Cal.com, or local backend/data/bookings.json fallback
 ```
 
----
-
-## 🛠️ Tech Stack & Integrations
-
-### Backend
-*   **FastAPI**: High-performance, asynchronous REST and Webhook API framework.
-*   **OpenAI SDK**: Handles semantic tool calling and token generation using `gpt-4o-mini` with latency < 1.4s.
-*   **NumPy**: Executes localized cosine similarity calculations for offline vector search.
-
-### Telephony & Voice
-*   **Vapi**: Orchestrates speech-to-text (Deepgram), LLM webhook routing, and text-to-speech (ElevenLabs) with full interruption handling.
-*   **Twilio**: Provides the direct public phone line (+1 (415) 360-6429).
-
-### Frontend
-*   **Vite + React.js**: Powers the single-page recruiter dashboard.
-*   **Lucide Icons**: Renders modern interactive interface elements.
-*   **Vapi Web SDK**: Integrates voice channels directly into the browser.
-
----
-
-## 📂 Folder Structure
-
-The folder structure is designed to be open for extension but closed for modification:
+## Folder Map
 
 ```text
 Assignment/
-│
-├── backend/
-│   ├── app/
-│   │   ├── main.py            # FastAPI Entry Point
-│   │   ├── config.py          # Configuration and Fallbacks
-│   │   ├── core/              # Core interfaces (BaseAgent, BaseVectorStore, BaseScheduler)
-│   │   ├── knowledge/         # RAG documents and local search models
-│   │   ├── tools/             # Executable tools for agents (calendar_tool, rag_tool)
-│   │   └── api/               # API Routers (chat, voice, calendar)
-│   ├── requirements.txt
-│   └── run.py                  # Server runner
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/        # UI Widgets (ChatWidget, Scheduler, VoiceCall)
-│   │   ├── App.jsx            # Main dashboard controller
-│   │   ├── index.css          # Premium glassmorphic styles and animations
-│   │   └── main.jsx           # React mounting
-│   ├── index.html
-│   └── vite.config.js
-│
-├── evals/
-│   ├── evaluate.py             # Automated testing framework
-│   └── eval_results.json       # Telemetry results
-│
-├── Evals_Report.md             # Part C Evaluation Report
-└── README.md                   # System Documentation
+|
+|-- backend/
+|   |-- run.py                         # Starts the FastAPI server
+|   |-- requirements.txt               # Python dependencies
+|   |-- data/                          # Local runtime data such as bookings.json
+|   `-- app/
+|       |-- main.py                    # Creates FastAPI app and registers routers
+|       |-- config.py                  # Environment variables and default settings
+|       |-- api/                       # HTTP endpoints
+|       |   |-- chat.py                # POST /api/chat
+|       |   |-- calendar.py            # POST /api/slots and /api/book
+|       |   `-- voice.py               # POST /api/voice-webhook for Vapi tools
+|       |-- agents/
+|       |   `-- openai_agent.py        # Main agent, tool routing, mock fallback
+|       |-- core/                      # Interfaces for agent, scheduler, vector store
+|       |-- knowledge/                 # Verified resume/project data used by RAG
+|       `-- tools/                     # Tool functions the agent can call
+|
+|-- frontend/
+|   |-- package.json                   # React/Vite dependencies and scripts
+|   `-- src/
+|       |-- App.jsx                    # Dashboard controller and tab switching
+|       |-- index.css                  # Shared UI styles
+|       |-- content/profile.js         # Candidate/project/evaluation display content
+|       `-- components/
+|           |-- ChatWidget.jsx         # Chat UI connected to /api/chat
+|           |-- Scheduler.jsx          # Calendar booking UI
+|           `-- VoiceCall.jsx          # Vapi web-call UI
+|
+|-- evals/
+|   `-- evaluate.py                    # Automated checks for key assignment metrics
+|
+`-- Evals_Report.md                    # Written evaluation report
 ```
 
----
-
-## 🚀 Setup & Execution Guide
-
-### 1. Prerequisite Installations
-Ensure you have **Python 3.10+** and **Node.js 18+** installed on your system.
-
-### 2. Backend Server Setup
-Navigate to the `backend/` directory, configure dependencies, and launch:
+## Backend Setup
 
 ```bash
-# Navigate to backend
-cd backend
-
-# Install python dependencies
+cd Assignment/backend
 pip install -r requirements.txt
-
-# Start the dev server
 python run.py
 ```
-*The FastAPI server will boot at [http://localhost:8000](http://localhost:8000).*
 
-### 3. Frontend Dashboard Setup
-Open a new terminal window, navigate to the `frontend/` directory, and launch the dev client:
+The API runs at `http://localhost:8000`.
+
+Optional environment variables can be placed in `Assignment/backend/.env`:
+
+```env
+OPENAI_API_KEY=your_openai_key
+CAL_API_KEY=your_cal_key
+CAL_EVENT_TYPE_ID=your_event_type_id
+LOCAL_BOOKINGS_PATH=data/bookings.json
+```
+
+Without `OPENAI_API_KEY`, the app uses `MockLLMAgent` so the project still runs locally.
+Without Cal.com credentials, bookings are stored locally in `backend/data/bookings.json`.
+
+## Frontend Setup
 
 ```bash
-# Navigate to frontend
-cd frontend
-
-# Install package dependencies
+cd Assignment/frontend
 npm install
-
-# Launch web server
 npm run dev
 ```
-*The React dashboard will launch at [http://localhost:3000](http://localhost:3000).*
 
-### 4. Running the Automated Evaluation Suite
-To execute the automated evaluation checks (latency, groundedness, and hit rate):
+The dashboard runs at `http://localhost:3000`.
+
+Optional frontend environment variables:
+
+```env
+VITE_BACKEND_URL=http://localhost:8000
+VITE_VAPI_PUBLIC_KEY=your_vapi_public_key
+VITE_VAPI_ASSISTANT_ID=your_vapi_assistant_id
+```
+
+If Vapi variables are missing, the voice panel shows that setup is required instead of pretending a live call is configured.
+
+## Evaluation
 
 ```bash
+cd Assignment
 python evals/evaluate.py
 ```
-*Results will print directly to the console and write to `evals/eval_results.json`.*
 
----
+The evaluator checks:
 
-## 🔒 Grounding and Anti-Hallucination Constraints
-To meet company expectations of a reliable agent system:
-1.  **Strict Semantic Guardrails**: The agent answers questions about Dipti *only* using information retrieved from the semantic search index.
-2.  **Honest Fallbacks**: If a query falls outside the knowledge base scope (e.g. asking if Dipti worked at Google), the agent will stay completely honest, decline to guess, and output: *"I do not have verified information on that in Dipti's records... Feel free to email Dipti directly at dipti820h@gmail.com!"*
-3.  **Slot Elimination**: The calendar system locks slots dynamically in `bookings.json`, preventing double-booking across both chat and telephone.
+- whether important facts are answered from the knowledge base
+- whether out-of-scope questions receive an honest fallback
+- average response latency
+- whether the RAG tool was called when expected
+
+## What To Explain In A Demo
+
+1. `backend/app/knowledge` stores the verified data about Dipti.
+2. `backend/app/tools/rag_tool.py` exposes that data as a searchable agent tool.
+3. `backend/app/agents/openai_agent.py` decides whether to search knowledge, check slots, or book an interview.
+4. `backend/app/api` turns those agent capabilities into HTTP endpoints.
+5. `frontend/src/components` gives each feature its own UI: chat, scheduler, and voice.
+6. `frontend/src/content/profile.js` keeps display-only profile/project text separate from component logic.

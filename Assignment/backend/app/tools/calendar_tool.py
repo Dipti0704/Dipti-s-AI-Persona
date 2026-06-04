@@ -1,7 +1,7 @@
 import json
-import os
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime
+from pathlib import Path
 from typing import List, Dict, Any
 from backend.app.core.scheduler import BaseScheduler
 from backend.app.config import settings
@@ -11,24 +11,25 @@ class LocalMockScheduler(BaseScheduler):
     Local JSON-based scheduler (Open-Closed Principle).
     Simulates slot generation and guarantees slot elimination on booking to prevent double-booking.
     """
-    def __init__(self, db_path: str = "bookings.json"):
-        self.db_path = db_path
+    def __init__(self, db_path: str = settings.LOCAL_BOOKINGS_PATH):
+        self.db_path = Path(db_path)
         self._init_db()
         
     def _init_db(self):
-        if not os.path.exists(self.db_path):
-            with open(self.db_path, "w", encoding="utf-8") as f:
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        if not self.db_path.exists():
+            with self.db_path.open("w", encoding="utf-8") as f:
                 json.dump([], f)
                 
     def _get_bookings(self) -> List[Dict[str, Any]]:
         try:
-            with open(self.db_path, "r", encoding="utf-8") as f:
+            with self.db_path.open("r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
             return []
             
     def _save_bookings(self, bookings: List[Dict[str, Any]]):
-        with open(self.db_path, "w", encoding="utf-8") as f:
+        with self.db_path.open("w", encoding="utf-8") as f:
             json.dump(bookings, f, indent=2)
 
     def get_available_slots(self, date_str: str) -> List[str]:

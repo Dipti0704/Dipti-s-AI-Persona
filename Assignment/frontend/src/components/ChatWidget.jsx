@@ -67,7 +67,7 @@ export default function ChatWidget({ backendUrl }) {
         </div>
         <div>
           <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.05rem', fontWeight: 600 }}>Chat Representative</h3>
-          <span style={{ fontSize: '0.75rem', color: var(--text-muted), display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10b981', display: 'inline-block' }}></span>
             Grounded RAG Agent
           </span>
@@ -130,7 +130,7 @@ export default function ChatWidget({ backendUrl }) {
       {toolLogs.length > 0 && (
         <div style={{ background: 'rgba(6, 182, 212, 0.05)', padding: '8px 16px', borderTop: '1px solid rgba(6, 182, 212, 0.15)', borderBottom: '1px solid rgba(6, 182, 212, 0.15)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.75rem', color: '#06b6d4' }}>
           <Cpu size={14} className="spin-animation" />
-          <marquee scrollamount="3">{toolLogs.join(' | ')}</marquee>
+          <span>{toolLogs.join(' | ')}</span>
         </div>
       )}
 
@@ -155,7 +155,7 @@ export default function ChatWidget({ backendUrl }) {
           onFocus={(e) => e.target.style.borderColor = 'var(--primary-indigo)'}
           onBlur={(e) => e.target.style.borderColor = 'var(--border-glass)'}
         />
-        <button type="submit" className="btn btn-primary" style={{ padding: '12px', borderRadius: '12px' }}>
+        <button type="submit" className="btn btn-primary" style={{ padding: '12px', borderRadius: '12px' }} aria-label="Send message">
           <Send size={18} />
         </button>
       </form>
