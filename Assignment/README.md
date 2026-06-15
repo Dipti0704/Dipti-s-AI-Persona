@@ -1,4 +1,4 @@
-# Dipti Hatwar AI Persona
+# Dipti's AI Persona
 
 This project is an AI representative for Dipti Hatwar. It supports:
 
