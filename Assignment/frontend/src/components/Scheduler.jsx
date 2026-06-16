@@ -125,44 +125,44 @@ export default function Scheduler({ backendUrl }) {
   };
 
   return (
-    <div className="glass-panel scheduler-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', minHeight: '550px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '16px' }}>
-        <CalendarRange size={24} color="var(--primary-indigo)" />
-        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 600 }}>Interview Scheduler</h3>
+    <div className="glass-panel scheduler-card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px', height: '420px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderBottom: '1px solid var(--border-glass)', paddingBottom: '10px' }}>
+        <CalendarRange size={20} color="var(--primary-indigo)" />
+        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', fontWeight: 600 }}>Interview Scheduler</h3>
       </div>
       
       {bookingResult ? (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', gap: '16px', animation: 'scaleUp 0.4s ease' }}>
-          <CheckCircle2 size={64} color="#10b981" />
-          <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', color: '#10b981', fontWeight: 600 }}>Booking Confirmed! 🚀</h4>
-          <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', maxWidth: '320px', lineHeight: 1.5 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, textAlign: 'center', gap: '12px', animation: 'scaleUp 0.4s ease' }}>
+          <CheckCircle2 size={48} color="#10b981" />
+          <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: '#10b981', fontWeight: 600 }}>Booking Confirmed! 🚀</h4>
+          <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', maxWidth: '300px', lineHeight: 1.4 }}>
             Dipti's AI representative has reserved your interview slot successfully.
           </p>
-          <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', padding: '16px', borderRadius: '12px', width: '100%', maxWidth: '360px', display: 'flex', flexDirection: 'column', gap: '8px', textAlign: 'left' }}>
-            <div style={{ fontSize: '0.85rem' }}><span style={{ color: 'var(--text-muted)' }}>Date:</span> <strong style={{ color: '#fff' }}>{bookingResult.date}</strong></div>
-            <div style={{ fontSize: '0.85rem' }}><span style={{ color: 'var(--text-muted)' }}>Time:</span> <strong style={{ color: '#fff' }}>{bookingResult.time} (IST)</strong></div>
-            <div style={{ fontSize: '0.85rem' }}><span style={{ color: 'var(--text-muted)' }}>Event Link:</span> <a href={bookingResult.meeting_link} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>Launch Meeting 🔗</a></div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-dimmed)', marginTop: '4px' }}>A confirmation invite has been emailed.</div>
+          <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', padding: '12px', borderRadius: '10px', width: '100%', maxWidth: '360px', display: 'flex', flexDirection: 'column', gap: '6px', textAlign: 'left' }}>
+            <div style={{ fontSize: '0.78rem' }}><span style={{ color: 'var(--text-muted)' }}>Date:</span> <strong style={{ color: '#fff' }}>{bookingResult.date}</strong></div>
+            <div style={{ fontSize: '0.78rem' }}><span style={{ color: 'var(--text-muted)' }}>Time:</span> <strong style={{ color: '#fff' }}>{bookingResult.time} (IST)</strong></div>
+            <div style={{ fontSize: '0.78rem' }}><span style={{ color: 'var(--text-muted)' }}>Event Link:</span> <a href={bookingResult.meeting_link} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-cyan)', textDecoration: 'none' }}>Launch Meeting 🔗</a></div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-dimmed)', marginTop: '2px' }}>A confirmation invite has been emailed.</div>
           </div>
-          <button className="btn btn-secondary" onClick={() => setBookingResult(null)} style={{ marginTop: '10px' }}>Book Another Slot</button>
+          <button className="btn btn-secondary" onClick={() => setBookingResult(null)} style={{ marginTop: '6px', padding: '8px 16px', fontSize: '0.8rem' }}>Book Another Slot</button>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, overflowY: 'auto' }}>
           {/* Day selection */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>1. Choose Date</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>1. Choose Date</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '4px' }}>
               {datesList.map((dt) => (
                 <button
                   key={dt.value}
                   onClick={() => setSelectedDate(dt.value)}
                   style={{
-                    padding: '10px 4px',
-                    borderRadius: '10px',
+                    padding: '6px 2px',
+                    borderRadius: '8px',
                     background: selectedDate === dt.value ? 'linear-gradient(135deg, var(--primary-indigo) 0%, var(--secondary-purple) 100%)' : 'rgba(255,255,255,0.03)',
                     border: selectedDate === dt.value ? 'none' : '1px solid var(--border-glass)',
                     color: '#fff',
-                    fontSize: '0.8rem',
+                    fontSize: '0.75rem',
                     fontWeight: 600,
                     cursor: 'pointer',
                     textAlign: 'center',
@@ -170,46 +170,46 @@ export default function Scheduler({ backendUrl }) {
                   }}
                 >
                   {dt.label.split(',')[0]}
-                  <div style={{ fontSize: '0.85rem', marginTop: '2px', opacity: 0.9 }}>{dt.label.split(' ')[2]}</div>
+                  <div style={{ fontSize: '0.75rem', marginTop: '1px', opacity: 0.9 }}>{dt.label.split(' ')[2]}</div>
                 </button>
               ))}
             </div>
           </div>
           
           {/* Available Slots */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>2. Select Available Slot</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500 }}>2. Select Available Slot</label>
             {isLoading ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                <Clock size={16} className="spin-animation" style={{ marginRight: '8px' }} /> Checking availability...
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                <Clock size={14} className="spin-animation" style={{ marginRight: '6px' }} /> Checking availability...
               </div>
             ) : slots.length === 0 ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60px', border: '1px dashed var(--border-glass)', borderRadius: '10px', color: 'var(--text-dimmed)', fontSize: '0.85rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', border: '1px dashed var(--border-glass)', borderRadius: '8px', color: 'var(--text-dimmed)', fontSize: '0.8rem' }}>
                 No slots available on this date.
               </div>
             ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                {slots.map((sl) => (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+                {slots.slice(0, 6).map((sl) => ( // limit to max 6 slots to keep layout clean
                   <button
                     key={sl}
                     onClick={() => setSelectedTime(sl)}
                     style={{
-                      padding: '10px 8px',
-                      borderRadius: '10px',
+                      padding: '6px 4px',
+                      borderRadius: '8px',
                       background: selectedTime === sl ? 'rgba(6, 182, 212, 0.15)' : 'rgba(255,255,255,0.02)',
                       border: selectedTime === sl ? '1px solid var(--accent-cyan)' : '1px solid var(--border-glass)',
                       color: selectedTime === sl ? 'var(--accent-cyan)' : '#fff',
-                      fontSize: '0.85rem',
+                      fontSize: '0.8rem',
                       fontWeight: 500,
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '6px',
+                      gap: '4px',
                       transition: 'all 0.2s'
                     }}
                   >
-                    <Clock size={12} />
+                    <Clock size={10} />
                     {sl}
                   </button>
                 ))}
@@ -219,13 +219,13 @@ export default function Scheduler({ backendUrl }) {
           
           {/* Form Credentials */}
           {selectedTime && (
-            <form onSubmit={handleBooking} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: 'auto', animation: 'fadeIn 0.3s ease' }}>
-              <div style={{ borderTop: '1px solid var(--border-glass)', paddingTop: '14px', marginBottom: '4px' }}>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Confirm Booking for <strong style={{ color: 'var(--accent-cyan)' }}>{selectedTime}</strong> on <strong>{selectedDate}</strong></span>
+            <form onSubmit={handleBooking} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: 'auto', animation: 'fadeIn 0.3s ease' }}>
+              <div style={{ borderTop: '1px solid var(--border-glass)', paddingTop: '8px', marginBottom: '2px' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Confirm Booking for <strong style={{ color: 'var(--accent-cyan)' }}>{selectedTime}</strong> on <strong>{selectedDate}</strong></span>
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <div style={{ flex: 1, position: 'relative' }}>
-                  <User size={14} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-dimmed)' }} />
+                  <User size={12} style={{ position: 'absolute', left: '10px', top: '10px', color: 'var(--text-dimmed)' }} />
                   <input
                     type="text"
                     placeholder="Your Name"
@@ -236,16 +236,16 @@ export default function Scheduler({ backendUrl }) {
                       width: '100%',
                       background: 'var(--bg-input-glass)',
                       border: '1px solid var(--border-glass)',
-                      padding: '10px 10px 10px 32px',
-                      borderRadius: '10px',
+                      padding: '8px 10px 8px 28px',
+                      borderRadius: '8px',
                       color: '#fff',
-                      fontSize: '0.82rem',
+                      fontSize: '0.78rem',
                       outline: 'none'
                     }}
                   />
                 </div>
                 <div style={{ flex: 1, position: 'relative' }}>
-                  <Mail size={14} style={{ position: 'absolute', left: '12px', top: '12px', color: 'var(--text-dimmed)' }} />
+                  <Mail size={12} style={{ position: 'absolute', left: '10px', top: '10px', color: 'var(--text-dimmed)' }} />
                   <input
                     type="email"
                     placeholder="Your Email"
@@ -256,10 +256,10 @@ export default function Scheduler({ backendUrl }) {
                       width: '100%',
                       background: 'var(--bg-input-glass)',
                       border: '1px solid var(--border-glass)',
-                      padding: '10px 10px 10px 32px',
-                      borderRadius: '10px',
+                      padding: '8px 10px 8px 28px',
+                      borderRadius: '8px',
                       color: '#fff',
-                      fontSize: '0.82rem',
+                      fontSize: '0.78rem',
                       outline: 'none'
                     }}
                   />
@@ -267,12 +267,12 @@ export default function Scheduler({ backendUrl }) {
               </div>
               
               {error && (
-                <div style={{ color: '#ef4444', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(239,68,68,0.05)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(239,68,68,0.15)' }}>
-                  <AlertCircle size={12} /> {error}
+                <div style={{ color: '#ef4444', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(239,68,68,0.05)', padding: '6px', borderRadius: '6px', border: '1px solid rgba(239,68,68,0.15)' }}>
+                  <AlertCircle size={10} /> {error}
                 </div>
               )}
               
-              <button type="submit" className="btn btn-accent" style={{ width: '100%', padding: '10px' }}>Confirm Interview Appointment</button>
+              <button type="submit" className="btn btn-accent" style={{ width: '100%', padding: '8px', fontSize: '0.8rem' }}>Confirm Interview Appointment</button>
             </form>
           )}
         </div>

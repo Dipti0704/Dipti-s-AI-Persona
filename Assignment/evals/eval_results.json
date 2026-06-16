@@ -1,6 +1,6 @@
 {
   "metrics": {
-    "avg_latency_seconds": 3.65,
+    "avg_latency_seconds": 3.874,
     "groundedness_percent": 100.0,
     "retrieval_hit_percent": 100.0,
     "hallucination_rate_percent": 0.0
@@ -8,31 +8,31 @@
   "test_cases": [
     {
       "query": "Which project of yours used LangGraph and Ollama?",
-      "latency_seconds": 5.767,
+      "latency_seconds": 4.054,
       "groundedness": "passed",
       "retrieval_hit": "passed"
     },
     {
       "query": "Where did you do your AI Research Developer internship?",
-      "latency_seconds": 2.717,
+      "latency_seconds": 3.268,
       "groundedness": "passed",
       "retrieval_hit": "passed"
     },
     {
       "query": "What are your education credentials?",
-      "latency_seconds": 2.763,
+      "latency_seconds": 3.684,
       "groundedness": "passed",
       "retrieval_hit": "passed"
     },
     {
       "query": "Do you have experience with fraud detection systems?",
-      "latency_seconds": 3.309,
+      "latency_seconds": 5.68,
       "groundedness": "passed",
       "retrieval_hit": "passed"
     },
     {
       "query": "Did you ever work as a principal engineer at Google?",
-      "latency_seconds": 3.692,
+      "latency_seconds": 2.683,
       "groundedness": "passed",
       "retrieval_hit": "passed"
     }

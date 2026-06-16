@@ -1,15 +1,16 @@
 export const candidateProfile = {
   name: "Dipti Hatwar",
   title: "AI Persona",
-  role: "Placement Committee Cell Secretary",
+  role: "3rd year Undergraduate ... still learning",
   location: "Bengaluru, India",
   email: "dipti820h@gmail.com",
-  githubUrl: "https://github.com/diptihatwar",
+  githubUrl: "https://github.com/Dipti0704",
+  linkedinUrl: "https://www.linkedin.com/in/dipti-hatwar-024027289/",
+  portfolioUrl: "https://dipti-things.vercel.app/",
   bio:
-    "Dipti is an AI Research Developer and student at Scaler School of Technology and BITS Pilani, focused on agentic workflows, RAG systems, and data pipelines.",
+    "Dipti is a 3rd year Undergraduate student at Scaler School of Technology and BITS Pilani. She is an ex-AI Research Intern at WNS-VURAM, focused on agentic workflows, RAG systems, and data pipelines.",
   education: "B.Sc. and M.Sc. in Computer Science",
-  internship: "AI Research Intern at WNS-VURAM",
-  responsibility: "Scaler SST Placement Cell Secretary",
+  internship: "Ex-AI Research Intern at WNS-VURAM",
 };
 
 export const dashboardTabs = [

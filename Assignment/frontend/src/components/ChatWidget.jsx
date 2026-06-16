@@ -131,7 +131,7 @@ export default function ChatWidget({ backendUrl }) {
   };
 
   return (
-    <div className="glass-panel chat-container" style={{ display: 'flex', flexDirection: 'column', height: '550px', overflow: 'hidden' }}>
+    <div className="glass-panel chat-container" style={{ display: 'flex', flexDirection: 'column', height: '420px', overflow: 'hidden' }}>
       {/* Header */}
       <div className="chat-header" style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-glass)', display: 'flex', alignItems: 'center', gap: '10px' }}>
         <div className="avatar-glow" style={{ width: '38px', height: '38px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--primary-indigo) 0%, var(--secondary-purple) 100%)', display: 'flex', alignItems: 'center', justifySelf: 'center', justifyContent: 'center' }}>
