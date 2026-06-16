@@ -102,10 +102,15 @@ class MockLLMAgent(BaseAgent):
             "tool_calls": [{"name": "search_knowledge_base", "args": {"query": user_message}}],
         }
 
-    def chat_stream(self, user_message: str, history: List[Dict[str, str]]) -> Generator[str, None, None]:
+    def chat_stream(self, user_message: str, history: List[Dict[str, str]]) -> Generator[Dict[str, Any], None, None]:
         result = self.chat(user_message, history)
-        for word in result["response"].split(" "):
-            yield word + " "
+        if result.get("tool_calls"):
+            yield {"tool_calls": result["tool_calls"]}
+        
+        words = result["response"].split(" ")
+        for i, word in enumerate(words):
+            suffix = " " if i < len(words) - 1 else ""
+            yield {"text": word + suffix}
 
 
 class OpenAIAgent(BaseAgent):
@@ -273,10 +278,103 @@ class OpenAIAgent(BaseAgent):
             print(f"Error in OpenAI Agent chat: {exc}. Using mock agent fallback.")
             return self.mock_agent.chat(user_message, history)
 
-    def chat_stream(self, user_message: str, history: List[Dict[str, str]]) -> Generator[str, None, None]:
-        result = self.chat(user_message, history)
-        for word in result["response"].split(" "):
-            yield word + " "
+    def chat_stream(self, user_message: str, history: List[Dict[str, str]]) -> Generator[Dict[str, Any], None, None]:
+        if not self.client:
+            yield from self.mock_agent.chat_stream(user_message, history)
+            return
+
+        try:
+            messages = [{"role": "system", "content": self._get_system_prompt()}]
+            messages.extend({"role": msg["role"], "content": msg["content"]} for msg in history)
+            messages.append({"role": "user", "content": user_message})
+
+            response = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                tools=self.tools,
+                tool_choice="auto",
+                temperature=0.2,
+                stream=True
+            )
+
+            tool_calls_dict = {}
+            for chunk in response:
+                delta = chunk.choices[0].delta
+                
+                # Check for content stream
+                if delta.content:
+                    yield {"text": delta.content}
+                
+                # Check for tool calls
+                if delta.tool_calls:
+                    for tc_chunk in delta.tool_calls:
+                        idx = tc_chunk.index
+                        if idx not in tool_calls_dict:
+                            tool_calls_dict[idx] = {
+                                "id": tc_chunk.id,
+                                "name": tc_chunk.function.name if tc_chunk.function else "",
+                                "arguments": tc_chunk.function.arguments if tc_chunk.function else ""
+                            }
+                        else:
+                            if tc_chunk.id:
+                                tool_calls_dict[idx]["id"] = tc_chunk.id
+                            if tc_chunk.function:
+                                if tc_chunk.function.name:
+                                    tool_calls_dict[idx]["name"] += tc_chunk.function.name
+                                if tc_chunk.function.arguments:
+                                    tool_calls_dict[idx]["arguments"] += tc_chunk.function.arguments
+
+            if tool_calls_dict:
+                tool_calls = []
+                for idx, tc in sorted(tool_calls_dict.items()):
+                    tool_calls.append(tc)
+                
+                # Yield tool calls info to UI
+                yield {"tool_calls": [{"name": tc["name"], "args": json.loads(tc["arguments"] or "{}")} for tc in tool_calls]}
+                
+                # Execute tool calls locally
+                assistant_msg = {
+                    "role": "assistant",
+                    "content": None,
+                    "tool_calls": [
+                        {
+                            "id": tc["id"],
+                            "type": "function",
+                            "function": {
+                                "name": tc["name"],
+                                "arguments": tc["arguments"]
+                            }
+                        } for tc in tool_calls
+                    ]
+                }
+                messages.append(assistant_msg)
+                
+                for tc in tool_calls:
+                    func_name = tc["name"]
+                    func_args = json.loads(tc["arguments"] or "{}")
+                    result = self._run_tool(func_name, func_args)
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": tc["id"],
+                        "name": func_name,
+                        "content": result
+                    })
+                
+                # Run the second API call to get the grounded response, streaming it
+                second_response = self.client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=messages,
+                    temperature=0.2,
+                    stream=True
+                )
+                for chunk in second_response:
+                    delta = chunk.choices[0].delta
+                    if delta.content:
+                        yield {"text": delta.content}
+
+        except Exception as exc:
+            print(f"Error in OpenAI Agent chat_stream: {exc}. Using mock agent fallback.")
+            yield from self.mock_agent.chat_stream(user_message, history)
 
 
 def get_agent() -> BaseAgent:

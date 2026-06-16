@@ -18,9 +18,9 @@ class BaseAgent(ABC):
         pass
         
     @abstractmethod
-    def chat_stream(self, user_message: str, history: List[Dict[str, str]]) -> Generator[str, None, None]:
+    def chat_stream(self, user_message: str, history: List[Dict[str, str]]) -> Generator[Dict[str, Any], None, None]:
         """
-        Processes a user message and yields token chunks in real time.
+        Processes a user message and yields response packets in real time.
         Useful for high-end web streaming interfaces.
         """
         pass

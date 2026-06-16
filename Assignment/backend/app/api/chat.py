@@ -1,4 +1,6 @@
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
+import json
 from pydantic import BaseModel
 from typing import List, Dict, Any
 from backend.app.agents.openai_agent import get_agent
@@ -31,5 +33,18 @@ async def chat_endpoint(payload: ChatRequest):
             "response": result["response"],
             "tool_calls": result.get("tool_calls", [])
         }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/chat/stream")
+async def chat_stream_endpoint(payload: ChatRequest):
+    try:
+        formatted_history = [{"role": msg.role, "content": msg.content} for msg in payload.history]
+        
+        def event_generator():
+            for chunk in agent.chat_stream(payload.message, formatted_history):
+                yield f"data: {json.dumps(chunk)}\n\n"
+                
+        return StreamingResponse(event_generator(), media_type="text/event-stream")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

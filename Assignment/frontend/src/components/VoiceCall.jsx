@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, Mic, MicOff, Volume2, Info, ArrowUpRight } from 'lucide-react';
-import Vapi from '@vapi-ai/web';
+import VapiModule from '@vapi-ai/web';
+const Vapi = VapiModule.default || VapiModule;
 
 export default function VoiceCall() {
   const [vapi, setVapi] = useState(null);
@@ -143,7 +144,7 @@ export default function VoiceCall() {
           <ArrowUpRight size={14} color="var(--text-dimmed)" />
         </div>
         <div style={{ fontSize: '1.2rem', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-white)' }}>
-          +1 (415) 360-6429
+          +1 (984) 256-8289
         </div>
         <div style={{ fontSize: '0.75rem', color: 'var(--text-dimmed)', display: 'flex', gap: '6px', alignItems: 'flex-start', marginTop: '2px' }}>
           <Info size={12} style={{ flexShrink: 0, marginTop: '2px' }} />

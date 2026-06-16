@@ -13,9 +13,18 @@ export default function ChatWidget({ backendUrl }) {
   const [toolLogs, setToolLogs] = useState([]);
   const chatEndRef = useRef(null);
 
+  const typingQueueRef = useRef("");
+  const typingIntervalRef = useRef(null);
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    return () => {
+      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+    };
+  }, []);
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -27,8 +36,15 @@ export default function ChatWidget({ backendUrl }) {
     setIsLoading(true);
     setToolLogs([]);
 
+    // Clear any active typing interval from a previous response
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current);
+      typingIntervalRef.current = null;
+    }
+    typingQueueRef.current = "";
+
     try {
-      const response = await fetch(`${backendUrl}/api/chat`, {
+      const response = await fetch(`${backendUrl}/api/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -39,16 +55,72 @@ export default function ChatWidget({ backendUrl }) {
 
       if (!response.ok) throw new Error('Failed to fetch response');
       
-      const data = await response.json();
-      
-      // Update logs if tools were called
-      if (data.tool_calls && data.tool_calls.length > 0) {
-        setToolLogs(data.tool_calls.map(tc => `Tool Triggered: ${tc.name}(${JSON.stringify(tc.args)})`));
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+      let isStreamingActive = true;
+      let currentText = "";
+
+      // Push an empty assistant message first that we will stream into
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+
+      // Start the smooth typewriter effect interval
+      typingIntervalRef.current = setInterval(() => {
+        if (typingQueueRef.current.length > 0) {
+          // Dynamic batch size to catch up if text generation is extremely fast (bursts)
+          const batchSize = typingQueueRef.current.length > 60 ? 4 : (typingQueueRef.current.length > 30 ? 2 : 1);
+          const nextChars = typingQueueRef.current.substring(0, batchSize);
+          typingQueueRef.current = typingQueueRef.current.substring(batchSize);
+          currentText += nextChars;
+
+          setMessages(prev => {
+            const updated = [...prev];
+            updated[updated.length - 1] = { role: 'assistant', content: currentText };
+            return updated;
+          });
+        } else if (!isStreamingActive) {
+          clearInterval(typingIntervalRef.current);
+          typingIntervalRef.current = null;
+        }
+      }, 15); // Print a character roughly every 15ms
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        // Save the last element (which could be a partial line) back to buffer
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const dataJson = JSON.parse(line.substring(6));
+              
+              // Update logs if tools were called
+              if (dataJson.tool_calls && dataJson.tool_calls.length > 0) {
+                setToolLogs(dataJson.tool_calls.map(tc => `Tool Triggered: ${tc.name}(${JSON.stringify(tc.args)})`));
+              }
+
+              // Queue text chunks for the typewriter instead of writing immediately
+              if (dataJson.text) {
+                typingQueueRef.current += dataJson.text;
+              }
+            } catch (err) {
+              console.warn("Failed to parse stream event chunk:", err, line);
+            }
+          }
+        }
       }
 
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      isStreamingActive = false;
     } catch (error) {
       console.error(error);
+      if (typingIntervalRef.current) {
+        clearInterval(typingIntervalRef.current);
+        typingIntervalRef.current = null;
+      }
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: "I apologize, but I encountered a communication error with my backend services. Please make sure the FastAPI server is running locally on port 8000." 

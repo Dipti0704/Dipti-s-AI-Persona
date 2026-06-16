@@ -1,6 +1,7 @@
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from typing import List, Dict, Any
 from backend.app.core.scheduler import BaseScheduler
@@ -100,31 +101,54 @@ class CalComScheduler(BaseScheduler):
         self.mock_scheduler = LocalMockScheduler()
         self.api_key = settings.CAL_API_KEY
         self.event_type_id = settings.CAL_EVENT_TYPE_ID
-        self.base_url = "https://api.cal.com/v1"
+        self.base_url = "https://api.cal.com/v2"
         
     def get_available_slots(self, date_str: str) -> List[str]:
         if not self.api_key or not self.event_type_id:
             return self.mock_scheduler.get_available_slots(date_str)
             
         try:
-            # Query Cal.com availability
-            # In a real environment, we call their availability endpoint
-            headers = {"Content-Type": "application/json"}
-            url = f"{self.base_url}/availability"
+            # Query Cal.com v2 slots API
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.api_key}",
+                "cal-api-version": "2024-08-13"
+            }
+            url = f"{self.base_url}/slots/available"
+            
             params = {
-                "apiKey": self.api_key,
-                "eventTypeId": self.event_type_id,
+                "eventTypeId": int(self.event_type_id),
                 "startTime": f"{date_str}T00:00:00Z",
-                "endTime": f"{date_str}T23:59:59Z"
+                "endTime": f"{date_str}T23:59:59Z",
+                "timeZone": settings.TIMEZONE
             }
             response = requests.get(url, params=params, headers=headers, timeout=5)
             if response.status_code == 200:
                 data = response.json()
+                slots_data = data.get("data", {}).get("slots", {})
+                
+                day_slots = []
+                if isinstance(slots_data, dict):
+                    day_slots = slots_data.get(date_str, [])
+                elif isinstance(slots_data, list):
+                    day_slots = slots_data
+                
                 slots = []
-                for slot in data.get("slots", []):
-                    # Parse slot ISO format (e.g. 2026-05-23T10:00:00.000Z)
-                    dt = datetime.fromisoformat(slot["time"].replace("Z", "+00:00"))
-                    slots.append(dt.strftime("%H:%M"))
+                local_tz = ZoneInfo(settings.TIMEZONE)
+                for slot in day_slots:
+                    time_val = slot.get("time")
+                    if time_val:
+                        try:
+                            # Safely parse and convert slot ISO format to local timezone
+                            clean_time = time_val.replace("Z", "+00:00")
+                            dt = datetime.fromisoformat(clean_time)
+                            dt_local = dt.astimezone(local_tz)
+                            slots.append(dt_local.strftime("%H:%M"))
+                        except Exception as e:
+                            print(f"Error parsing slot time {time_val}: {e}")
+                            if "T" in time_val:
+                                time_part = time_val.split("T")[1]
+                                slots.append(time_part[:5])
                 return slots
             else:
                 print(f"Cal.com returned status {response.status_code}. Using local scheduler fallback.")
@@ -140,31 +164,38 @@ class CalComScheduler(BaseScheduler):
         try:
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.api_key}"
+                "Authorization": f"Bearer {self.api_key}",
+                "cal-api-version": "2024-08-13"
             }
             url = f"{self.base_url}/bookings"
             
-            # Combine date and time
-            start_iso = f"{date_str}T{time_str}:00Z"
+            # Combine date and time, set timezone
+            dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+            dt_local = dt.replace(tzinfo=ZoneInfo(settings.TIMEZONE))
+            start_iso = dt_local.isoformat()
             
             payload = {
                 "eventTypeId": int(self.event_type_id),
                 "start": start_iso,
-                "name": attendee_name,
-                "email": attendee_email,
-                "timeZone": settings.TIMEZONE
+                "attendee": {
+                    "name": attendee_name,
+                    "email": attendee_email,
+                    "timeZone": settings.TIMEZONE,
+                    "language": "en"
+                }
             }
             
             response = requests.post(url, json=payload, headers=headers, timeout=5)
             if response.status_code in [200, 201]:
                 data = response.json()
-                booking = data.get("booking", {})
+                booking = data.get("data", {})
+                meeting_link = booking.get("meetingUrl") or booking.get("videoCallUrl") or f"https://cal.com/meeting/{booking.get('id')}"
                 return {
                     "status": "success",
                     "booking_id": str(booking.get("id")),
                     "date": date_str,
                     "time": time_str,
-                    "meeting_link": booking.get("videoCallUrl", f"https://cal.com/meeting/{booking.get('id')}"),
+                    "meeting_link": meeting_link,
                     "message": f"Successfully booked interview via Cal.com! Confirmation sent to {attendee_email}."
                 }
             else:
