@@ -137,18 +137,56 @@ export default function VoiceCall() {
         </div>
       </div>
 
-      {/* Twilio Telephony Access Card */}
-      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-glass)', padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      {/* Twilio Telephony Access Card - Highlighted & Glowing */}
+      <div style={{ 
+        background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%)', 
+        border: '1px solid rgba(168, 85, 247, 0.35)', 
+        padding: '20px', 
+        borderRadius: '16px', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: '10px',
+        boxShadow: '0 8px 32px 0 rgba(168, 85, 247, 0.08)',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* Subtle background glow circle */}
+        <div style={{
+          position: 'absolute',
+          top: '-20px',
+          right: '-25px',
+          width: '80px',
+          height: '80px',
+          borderRadius: '50%',
+          background: 'var(--secondary-purple)',
+          filter: 'blur(30px)',
+          opacity: 0.15,
+          pointerEvents: 'none'
+        }} />
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Direct Telephony Line (Twilio)</span>
-          <ArrowUpRight size={14} color="var(--text-dimmed)" />
+          <span style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            Direct Telephony Line (Twilio)
+          </span>
+          <ArrowUpRight size={16} color="var(--accent-cyan)" />
         </div>
-        <div style={{ fontSize: '1.2rem', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-white)' }}>
+        
+        <div style={{ 
+          fontSize: '1.65rem', 
+          fontFamily: 'var(--font-heading)', 
+          fontWeight: 800, 
+          background: 'linear-gradient(to right, #38bdf8, #a78bfa)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          letterSpacing: '1px',
+          margin: '2px 0'
+        }}>
           +1 (984) 256-8289
         </div>
-        <div style={{ fontSize: '0.75rem', color: 'var(--text-dimmed)', display: 'flex', gap: '6px', alignItems: 'flex-start', marginTop: '2px' }}>
-          <Info size={12} style={{ flexShrink: 0, marginTop: '2px' }} />
-          <span>Configure Vapi and Twilio credentials to enable live phone calls, slot checks, and interview booking.</span>
+        
+        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <Info size={13} style={{ flexShrink: 0, color: 'var(--accent-cyan)' }} />
+          <span>Call from your cell phone to speak with Dipti's AI voice agent live!</span>
         </div>
       </div>
 

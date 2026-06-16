@@ -16,7 +16,6 @@ export const dashboardTabs = [
   { id: "chat", label: "AI Chat Representative" },
   { id: "voice", label: "Phone Voice Agent" },
   { id: "scheduler", label: "Live Calendar Slots" },
-  { id: "evals", label: "Evals Report" },
 ];
 
 export const portfolioProjects = [

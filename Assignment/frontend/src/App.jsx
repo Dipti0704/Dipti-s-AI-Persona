@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { Bot, User, Code, Calendar, BarChart3, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { Bot, User, Code, Calendar, Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
 import ChatWidget from './components/ChatWidget';
 import VoiceCall from './components/VoiceCall';
 import Scheduler from './components/Scheduler';
 import {
   candidateProfile,
   dashboardTabs,
-  evalMetrics,
-  failureModes,
   portfolioProjects,
 } from './content/profile';
 
@@ -15,44 +13,7 @@ const tabIcons = {
   chat: Bot,
   voice: Phone,
   scheduler: Calendar,
-  evals: BarChart3,
 };
-
-function MetricCard({ metric }) {
-  return (
-    <div className="metric-card">
-      <div className="metric-label">{metric.label}</div>
-      <h2 style={{ color: metric.color }}>{metric.value}</h2>
-      <span>{metric.note}</span>
-    </div>
-  );
-}
-
-function EvalsPanel() {
-  return (
-    <div className="glass-panel evals-panel">
-      <div className="panel-heading">
-        <h3>System Evaluations & Performance Report</h3>
-        <p>Part C requirements: groundedness, retrieval hit rate, and latency analysis.</p>
-      </div>
-
-      <div className="metrics-grid">
-        {evalMetrics.map((metric) => (
-          <MetricCard key={metric.label} metric={metric} />
-        ))}
-      </div>
-
-      <div className="failure-list">
-        <h4>Failure Modes & Resolution</h4>
-        {failureModes.map((failure) => (
-          <div key={failure.title} className="failure-item" style={{ borderLeftColor: failure.color }}>
-            <strong>{failure.title}:</strong> {failure.detail}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function CandidateSidebar() {
   return (
@@ -152,7 +113,6 @@ export default function App() {
           {activeTab === 'chat' && <ChatWidget backendUrl={backendUrl} />}
           {activeTab === 'voice' && <VoiceCall />}
           {activeTab === 'scheduler' && <Scheduler backendUrl={backendUrl} />}
-          {activeTab === 'evals' && <EvalsPanel />}
         </div>
 
         <CandidateSidebar />
